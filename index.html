@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0820">
+<title>MOREZ - Katalog Aplikasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --grad:linear-gradient(120deg,#a5b4fc,#f0abfc,#67e8f9,#a5b4fc);
+  --font:'Sora','Segoe UI',sans-serif;
+  /* Liquid glass tanpa backdrop-filter = jauh lebih ringan */
+  --glass-bg:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.05) 55%,rgba(255,255,255,.1));
+  --glass-border:1px solid rgba(255,255,255,.2);
+  --glass-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.08),0 6px 16px rgba(3,0,20,.28);
+  --ease:cubic-bezier(.2,.9,.3,1);
+  --spring:cubic-bezier(.3,1.5,.4,1);
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font);color:#fff;min-height:100vh;overflow-x:hidden;background:#0b0820;-webkit-tap-highlight-color:transparent}
+body.loading{overflow:hidden}
+
+/* Latar: 2 cahaya gradien, animasi transform saja (composited) */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(160deg,#0b0820,#160a38 45%,#08173a)}
+.orbit{position:absolute;border-radius:50%;will-change:transform}
+.o1{width:520px;height:520px;top:-14%;left:-45%;background:radial-gradient(circle,rgba(124,58,237,.7),transparent 66%);animation:f1 20s ease-in-out infinite}
+.o2{width:560px;height:560px;bottom:-18%;right:-50%;background:radial-gradient(circle,rgba(6,182,212,.5),rgba(219,39,119,.25) 45%,transparent 68%);animation:f2 24s ease-in-out infinite}
+@keyframes f1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(40%,55%,0) scale(1.2)}}
+@keyframes f2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-40%,-50%,0) scale(.9)}}
+
+/* Splash */
+#splash{
+  position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  background:linear-gradient(160deg,#0b0820,#1d0d44,#0a1c3f);
+  transition:opacity .6s ease,transform .8s cubic-bezier(.7,0,.2,1);
+}
+#splash.out{opacity:0;transform:scale(1.12);pointer-events:none}
+.orb{position:relative;width:120px;height:120px;display:grid;place-items:center}
+.orb::before{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent,#a5b4fc,#f0abfc,#67e8f9,transparent 80%);
+  -webkit-mask:radial-gradient(circle,transparent 52px,#000 53px);mask:radial-gradient(circle,transparent 52px,#000 53px);
+  animation:spin 1.3s linear infinite;
+}
+.orb::after{
+  content:"";position:absolute;inset:22px;border-radius:50%;
+  background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.95) 0,rgba(255,255,255,.15) 14%,transparent 15%),
+             radial-gradient(circle at 35% 30%,#e879f9,#6d28d9 60%,#1e1b4b);
+  box-shadow:0 0 40px rgba(168,85,247,.6),inset 0 -8px 16px rgba(255,255,255,.2);animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(.9)}50%{transform:scale(1.08)}}
+.splash-logo{display:flex;font-weight:800;font-size:44px;letter-spacing:.08em}
+.splash-logo span{
+  display:inline-block;opacity:0;transform:translateY(30px) scale(.6);
+  background:var(--grad);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:letter .7s cubic-bezier(.2,1.4,.4,1) forwards,shine 3s linear infinite;
+}
+.splash-logo span:nth-child(1){animation-delay:.1s,0s}
+.splash-logo span:nth-child(2){animation-delay:.2s,0s}
+.splash-logo span:nth-child(3){animation-delay:.3s,0s}
+.splash-logo span:nth-child(4){animation-delay:.4s,0s}
+.splash-logo span:nth-child(5){animation-delay:.5s,0s}
+@keyframes letter{to{opacity:1;transform:none}}
+@keyframes shine{to{background-position:-300% 0}}
+.bar{width:180px;height:4px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;width:40%;border-radius:99px;background:var(--grad);animation:slide 1.1s ease-in-out infinite}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(280%)}}
+.status{font-size:12px;color:#b9b7dc;letter-spacing:.05em;animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.4}}
+
+/* Layout */
+.page{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:36px 16px 120px}
+header{text-align:center;margin-bottom:22px}
+.brand{
+  font-size:42px;font-weight:800;letter-spacing:.06em;
+  background:var(--grad);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shine 8s linear infinite;
+}
+.tagline{margin-top:6px;font-size:13px;color:#c3c1e2}
+
+.glass{position:relative;background:var(--glass-bg);border:var(--glass-border);box-shadow:var(--glass-shadow)}
+
+#dynamicAlert{display:none;margin-bottom:16px;padding:14px 16px;border-radius:24px;font-size:13px;font-weight:500;line-height:1.6;
+  position:relative;overflow:hidden;white-space:pre-line;overflow-wrap:anywhere}
+#alertText a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+#dynamicAlert.show{display:block;animation:pop .6s var(--spring) both}
+#dynamicAlert::after{content:"";position:absolute;top:0;left:0;width:45%;height:100%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transform:translateX(-120%) skewX(-20deg);animation:sweep 5s ease-in-out infinite}
+#dynamicAlert.info{color:#e0e7ff;background:linear-gradient(145deg,rgba(129,140,248,.34),rgba(99,102,241,.12))}
+#dynamicAlert.warning{color:#fef3c7;background:linear-gradient(145deg,rgba(251,191,36,.32),rgba(245,158,11,.12))}
+#dynamicAlert.success{color:#d1fae5;background:linear-gradient(145deg,rgba(52,211,153,.32),rgba(16,185,129,.12))}
+#dynamicAlert.danger{color:#ffe4e6;background:linear-gradient(145deg,rgba(251,113,133,.34),rgba(244,63,94,.12))}
+@keyframes sweep{0%,55%{transform:translateX(-120%) skewX(-20deg)}100%{transform:translateX(320%) skewX(-20deg)}}
+@keyframes pop{from{opacity:0;transform:translateY(-12px) scale(.96)}to{opacity:1;transform:none}}
+
+/* Toolbar */
+.toolbar{display:flex;gap:10px;margin-bottom:12px;position:relative;z-index:5}
+.search{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:0 16px;border-radius:22px;transition:box-shadow .3s,border-color .3s}
+.search:focus-within{border-color:rgba(255,255,255,.55);box-shadow:var(--glass-shadow),0 0 0 4px rgba(196,181,253,.22)}
+.search svg{flex:none;color:#cfcdee}
+.search input{flex:1;min-width:0;background:none;border:0;outline:0;color:#fff;font:inherit;font-size:14px;padding:14px 0}
+.search input::placeholder{color:#9e9cc6}
+
+.sortwrap{position:relative;flex:none}
+.sortbtn{height:100%;display:flex;align-items:center;gap:8px;padding:0 14px;border-radius:22px;cursor:pointer;color:#fff;font:inherit;font-size:12.5px;font-weight:600;
+  transition:transform .3s var(--spring)}
+.sortbtn:active{transform:scale(.93)}
+.sortbtn .chev{transition:transform .35s var(--spring)}
+.sortbtn[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.sortbtn:focus-visible,.tab:focus-visible,.opt:focus-visible,.dl:focus-visible{outline:3px solid #c4b5fd;outline-offset:2px}
+.menu{position:absolute;right:0;top:calc(100% + 8px);width:210px;padding:6px;border-radius:24px;
+  background:linear-gradient(150deg,rgba(70,48,140,.97),rgba(30,24,80,.98));
+  border:var(--glass-border);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 16px 36px rgba(3,0,20,.55);
+  transform-origin:top right;visibility:hidden;opacity:0;transform:scale(.85) translateY(-8px);
+  transition:opacity .25s,transform .35s var(--spring),visibility 0s .35s}
+.menu.open{visibility:visible;opacity:1;transform:none;transition:opacity .25s,transform .35s var(--spring)}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;font:inherit;font-size:12.5px;font-weight:600;color:#dcd9f5;
+  background:none;border:0;border-radius:18px;padding:11px 12px;cursor:pointer;transition:background .2s,color .2s,transform .25s var(--spring)}
+.opt:active{transform:scale(.96)}
+.opt[aria-checked="true"]{color:#fff;background:linear-gradient(120deg,rgba(129,140,248,.55),rgba(217,70,239,.42));box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.opt .ck{opacity:0;transform:scale(.4);transition:.3s var(--spring)}
+.opt[aria-checked="true"] .ck{opacity:1;transform:none}
+
+/* ===== Bar kategori: geser + pil kaca cair ===== */
+.tabs{
+  overflow-x:auto;overflow-y:hidden;padding:8px 14px 14px;margin:0 -16px;scrollbar-width:none;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 28px),transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 28px),transparent);
+}
+.tabs::-webkit-scrollbar{display:none}
+.track{position:relative;display:flex;gap:8px;width:max-content;padding-right:22px}
+.tab{position:relative;z-index:1;flex:none;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;color:#cfcdee;padding:9px 18px;border-radius:99px;
+  background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:color .3s,background .3s,border-color .3s,transform .3s var(--spring)}
+.tab:active{transform:scale(.92)}
+.tab{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.tab[aria-selected="true"]{color:#fff;background:none;border-color:transparent;box-shadow:none;touch-action:none;cursor:grab}
+.track.dragging .tab[aria-selected="true"]:not(.hot){color:#cfcdee}
+.tab.hot{color:#fff}
+/* Pil cair yang meluncur antar tab */
+.ind{position:absolute;z-index:0;left:0;top:0;height:100%;width:0;pointer-events:none;will-change:transform,width;
+  transition:transform .6s var(--spring),width .6s var(--spring)}
+/* Lensa kaca: tint warna + kilau atas + tepi berpendar merah muda/biru seperti pembiasan */
+.ind::before{content:"";position:absolute;inset:0;border-radius:99px;transform-origin:center;
+  background:
+    radial-gradient(120% 90% at 30% 0%,rgba(255,255,255,.4),rgba(255,255,255,0) 55%),
+    linear-gradient(120deg,rgba(129,140,248,.6),rgba(217,70,239,.5),rgba(34,211,238,.45));
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.8),inset 0 -3px 6px rgba(255,255,255,.25),
+    inset 4px 0 9px rgba(255,90,170,.4),inset -4px 0 9px rgba(50,200,255,.4),0 6px 16px rgba(120,60,220,.45);
+  transition:transform .35s var(--spring),box-shadow .3s}
+.ind.press::before{transform:scale(1.12,1.2);box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(255,255,255,.3),
+    inset 5px 0 11px rgba(255,90,170,.5),inset -5px 0 11px rgba(50,200,255,.5),0 10px 22px rgba(120,60,220,.55)}
+.ind.drag{transition:width .28s var(--spring)}
+.ind.sq::before{animation:squish .6s var(--ease)}
+@keyframes squish{0%{transform:scale(1.22,.8)}45%{transform:scale(.94,1.1)}100%{transform:none}}
+
+.count{font-size:11.5px;color:#b4b2d6;margin:0 4px 12px;display:flex;justify-content:space-between;gap:8px}
+.count b{color:#fff;font-weight:700}
+
+/* ===== Kartu ===== */
+#publicAppList,#botList{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.card{
+  --mx:50%;--my:0%;--d:0ms;
+  position:relative;overflow:hidden;cursor:pointer;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px;border-radius:26px;
+  background:var(--glass-bg);border:var(--glass-border);box-shadow:var(--glass-shadow);
+  content-visibility:auto;contain-intrinsic-size:auto 96px;
+  opacity:0;transform:translateY(28px) scale(.95);
+  transition:opacity .55s var(--ease) var(--d),transform .6s var(--spring) var(--d),border-color .3s,box-shadow .3s;
+}
+.card.in{opacity:1;transform:none}
+.card:active{transform:scale(.97);transition-delay:0ms}
+.left{display:flex;align-items:center;gap:13px;min-width:0}
+.icon{flex:none;width:54px;height:54px;border-radius:18px;object-fit:cover;display:grid;place-items:center;font-weight:800;font-size:22px;color:#fff;
+  background:linear-gradient(135deg,#6366f1,#d946ef);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 4px 10px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.25)}
+.card.in .icon{animation:iconpop .7s var(--spring) both;animation-delay:calc(var(--d) + 120ms)}
+@keyframes iconpop{from{transform:scale(.6) rotate(-10deg)}to{transform:none}}
+.info{min-width:0}
+.name{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{margin-top:3px;font-size:11.5px;color:#c0bee0}
+.cat{display:inline-block;margin-top:6px;font-size:10.5px;font-weight:600;color:#f3e8ff;padding:2px 10px;border-radius:99px;
+  background:linear-gradient(145deg,rgba(192,132,252,.4),rgba(168,85,247,.16));border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.dl{position:relative;flex:none;overflow:hidden;text-decoration:none;color:#fff;font-weight:700;font-size:12.5px;padding:10px 18px;border-radius:16px;
+  background:linear-gradient(120deg,#6366f1,#c026d3);
+  border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 4px 12px rgba(99,102,241,.45);
+  transition:transform .3s var(--spring)}
+.dl::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg)}
+.card.in .dl::after{animation:glint 1.1s ease-out 1 both;animation-delay:calc(var(--d) + 500ms)}
+@keyframes glint{from{left:-60%}to{left:140%}}
+.dl:active{transform:scale(.92)}
+
+/* Efek kilau kursor hanya di perangkat dengan mouse */
+@media (hover:hover){
+  .card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;
+    background:radial-gradient(180px circle at var(--mx) var(--my),rgba(255,255,255,.26),transparent 65%)}
+  .card:hover{transform:translateY(-4px) scale(1.012);border-color:rgba(255,255,255,.45);box-shadow:var(--glass-shadow),0 12px 28px rgba(124,58,237,.4)}
+  .card:hover::before{opacity:1}
+  .dl:hover{transform:scale(1.07)}
+  .tab:hover{color:#fff}
+  .opt:hover{background:rgba(255,255,255,.12);color:#fff}
+}
+
+.empty{text-align:center;color:#b4b2d6;padding:44px 12px;font-size:13px;animation:pop .5s both}
+.empty b{display:block;color:#fff;font-size:15px;margin-bottom:4px}
+header,.toolbar,.tabs{animation:pop .7s cubic-bezier(.2,1,.3,1) both}
+.toolbar{animation-delay:.1s}.tabs{animation-delay:.2s}
+
+/* Detail & riwayat versi */
+body.sheet-open{overflow:hidden}
+#sheetWrap{position:fixed;inset:0;z-index:40;display:none}
+#sheetWrap.open{display:block}
+.scrim{position:absolute;inset:0;background:rgba(5,3,18,.75);animation:fade .3s both}
+.sheet{position:absolute;left:0;right:0;bottom:0;margin:0 auto;max-width:480px;max-height:86vh;overflow-y:auto;
+  border-radius:32px 32px 0 0;padding:10px 16px 30px;border:var(--glass-border);border-bottom:0;
+  background:linear-gradient(160deg,#2c1d63,#1a1654 55%,#12295c);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 -14px 40px rgba(124,58,237,.35);
+  animation:up .5s var(--ease) both}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(100%)}}
+.grab{width:42px;height:4px;border-radius:9px;background:rgba(255,255,255,.35);margin:0 auto 16px}
+.s-head{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.s-head .icon{width:64px;height:64px;border-radius:20px;font-size:26px}
+.s-title{font-weight:800;font-size:18px;line-height:1.25;overflow-wrap:anywhere}
+.s-close{margin-left:auto;flex:none;width:36px;height:36px;border-radius:50%;cursor:pointer;color:#fff;font-size:14px;
+  background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.25);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45);transition:transform .3s var(--spring)}
+.s-close:active{transform:rotate(90deg) scale(.9)}
+.s-label{font-size:11px;letter-spacing:.12em;color:#c0bee0;font-weight:600;margin-bottom:10px}
+.ver{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border-radius:22px;margin-bottom:10px;
+  background:var(--glass-bg);border:var(--glass-border);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
+  opacity:0;animation:rise .55s var(--ease) forwards;animation-delay:calc(var(--i)*55ms + 140ms)}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(.95)}to{opacity:1;transform:none}}
+.ver.latest{border-color:rgba(240,171,252,.65);background:linear-gradient(145deg,rgba(192,132,252,.36),rgba(168,85,247,.1))}
+.ver>div{min-width:0}
+.v-name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;overflow-wrap:anywhere}
+.badge{font-size:9.5px;font-weight:800;letter-spacing:.08em;padding:2px 8px;border-radius:99px;background:linear-gradient(120deg,#6366f1,#c026d3);box-shadow:inset 0 1px 0 rgba(255,255,255,.45)}
+.v-meta{font-size:11.5px;color:#c0bee0;margin-top:3px}
+.v-note{font-size:12px;color:#e2e0f7;margin-top:6px;white-space:pre-line;overflow-wrap:anywhere}
+.ver .dl{padding:9px 15px}
+
+/* ===== Pindah halaman ===== */
+.view{display:none}
+.view.active{display:block;animation:pop .55s var(--ease) both}
+
+/* ===== Bar bawah: kaca cair ===== */
+.dock{position:fixed;left:0;right:0;bottom:max(14px,env(safe-area-inset-bottom));z-index:30;display:flex;justify-content:center;
+  padding:0 16px;pointer-events:none;transition:opacity .3s,transform .4s var(--ease)}
+body.sheet-open .dock{opacity:0;transform:translateY(24px)}
+.dock-in{pointer-events:auto;position:relative;display:flex;gap:4px;padding:6px;border-radius:99px;width:min(100%,340px);
+  background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.06) 55%,rgba(255,255,255,.13));
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),inset 0 -1px 0 rgba(255,255,255,.1),0 14px 34px rgba(3,0,20,.55);
+  -webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6)}
+.dock-ind{top:6px;height:calc(100% - 12px)}
+.dock-btn{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 10px;border:0;border-radius:99px;cursor:pointer;
+  background:none;color:#cfcdee;font:inherit;font-size:12.5px;font-weight:700;-webkit-user-select:none;user-select:none;
+  transition:color .3s,transform .3s var(--spring)}
+.dock-btn svg{flex:none;transition:transform .4s var(--spring)}
+.dock-btn:active{transform:scale(.92)}
+.dock-btn[aria-selected="true"]{color:#fff}
+.dock-btn[aria-selected="true"] svg{transform:scale(1.12)}
+.dock-btn:focus-visible{outline:3px solid #c4b5fd;outline-offset:2px}
+
+/* ===== Halaman SC Bot ===== */
+.bot-hero{display:flex;align-items:center;gap:14px;padding:16px;border-radius:26px;margin-bottom:14px;overflow:hidden}
+.bot-hero .icon{width:50px;height:50px;border-radius:17px}
+.bot-hero b{display:block;font-size:15px;font-weight:800}
+.bot-hero span.sub{display:block;margin-top:3px;font-size:12px;line-height:1.5;color:#c9c7e6}
+.icon.botic{background:linear-gradient(135deg,#10b981,#06b6d4)}
+.bdesc{margin-top:5px;font-size:11.5px;line-height:1.45;color:#d6d4ee;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.s-desc{font-size:13px;line-height:1.65;color:#e2e0f7;white-space:pre-line;overflow-wrap:anywhere;margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.chip{font-size:11px;font-weight:600;padding:5px 11px;border-radius:99px;color:#f3e8ff;
+  background:linear-gradient(145deg,rgba(192,132,252,.4),rgba(168,85,247,.16));border:1px solid rgba(255,255,255,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.irow{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;border-radius:18px;margin-bottom:8px;font-size:12.5px;
+  background:var(--glass-bg);border:var(--glass-border);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.irow span{color:#c0bee0}
+.irow b{font-weight:700;text-align:right;overflow-wrap:anywhere}
+.dl-wide{display:block;text-align:center;margin-top:16px;padding:14px 18px;font-size:13.5px}
+
+#botTrack .tab[aria-selected="true"]{touch-action:auto;cursor:pointer}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .card{opacity:1;transform:none}
+}
+</style>
+</head>
+<body class="loading">
+
+<div class="bg"><div class="orbit o1"></div><div class="orbit o2"></div></div>
+
+<div id="splash">
+  <div class="orb"></div>
+  <div class="splash-logo"><span>M</span><span>O</span><span>R</span><span>E</span><span>Z</span></div>
+  <div class="bar"><i></i></div>
+  <div class="status" id="status">Memuat katalog...</div>
+</div>
+
+<div class="page">
+  <header>
+    <h1 class="brand">MOREZ</h1>
+    <p class="tagline" id="tagline">Digital Products & Applications Catalog</p>
+  </header>
+
+  <div id="dynamicAlert" class="glass" role="status"><span id="alertText"></span></div>
+
+  <section class="view active" id="viewApps">
+  <div class="toolbar">
+    <label class="search glass">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="searchInput" placeholder="Cari aplikasi..." autocomplete="off" aria-label="Cari aplikasi">
+    </label>
+    <div class="sortwrap">
+      <button class="sortbtn glass" id="sortBtn" aria-haspopup="true" aria-expanded="false" aria-label="Urutkan">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>
+        <span id="sortLabel">Terbaru</span>
+        <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="menu" id="sortMenu" role="menu"></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="track" id="track" role="tablist"><i class="ind" id="ind"></i></div>
+  </div>
+  <div class="count" id="count"></div>
+
+  <main id="publicAppList" aria-live="polite"></main>
+  </section>
+
+  <section class="view" id="viewBots">
+    <div class="bot-hero glass">
+      <span class="icon botic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M9 10h6M9 14h4"/></svg></span>
+      <div><b>SC Bot WhatsApp</b><span class="sub">Script bot siap pakai. Pilih, download, lalu jalankan.</span></div>
+    </div>
+    <div class="toolbar">
+      <label class="search glass">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" id="botSearch" placeholder="Cari SC Bot..." autocomplete="off" aria-label="Cari SC Bot">
+      </label>
+      <div class="sortwrap">
+        <button class="sortbtn glass" id="botSortBtn" aria-haspopup="true" aria-expanded="false" aria-label="Urutkan">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>
+          <span id="botSortLabel">Terbaru</span>
+          <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="menu" id="botSortMenu" role="menu"></div>
+      </div>
+    </div>
+    <div class="tabs" id="botTabs">
+      <div class="track" id="botTrack" role="tablist"><i class="ind" id="botInd"></i></div>
+    </div>
+    <div class="count" id="botCount"></div>
+    <main id="botList" aria-live="polite"></main>
+  </section>
+</div>
+
+<nav class="dock" aria-label="Navigasi utama">
+  <div class="dock-in" id="dockIn" role="tablist">
+    <i class="ind dock-ind" id="dInd"></i>
+    <button class="dock-btn" role="tab" data-view="apps" aria-selected="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>Aplikasi</button>
+    <button class="dock-btn" role="tab" data-view="bots" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M9 10h6M9 14h4"/></svg>SC Bot</button>
+  </div>
+</nav>
+
+<div id="sheetWrap" aria-hidden="true">
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYo_GAMxZKC069mDGQM2DCU9Cd2W9nzgI",
+  authDomain: "morez-d529e.firebaseapp.com",
+  projectId: "morez-d529e",
+  storageBucket: "morez-d529e.firebasestorage.app",
+  messagingSenderId: "349096012891",
+  appId: "1:349096012891:web:4987f9cb7cf5083c9c237e",
+  measurementId: "G-L4ELDRJSZG"
+};
+const db = getFirestore(initializeApp(firebaseConfig));
+
+const DEFAULT_CATS = ['Game','Recorder','Drama','Aplikasi Pro','Utility'];
+let CATEGORIES = ['Semua', ...DEFAULT_CATS];
+let savedCats = null;   // daftar kategori dari admin (Firestore: settings/categories)
+const SORTS = [
+  { key:'new',  label:'Terbaru',        short:'Terbaru',  desc:'baru ditambahkan' },
+  { key:'upd',  label:'Baru diupdate',  short:'Update',   desc:'baru diupdate' },
+  { key:'old',  label:'Terlama',        short:'Terlama',  desc:'terlama' },
+  { key:'az',   label:'Nama A → Z',     short:'A → Z',    desc:'nama A → Z' },
+  { key:'za',   label:'Nama Z → A',     short:'Z → A',    desc:'nama Z → A' }
+];
+let allApps = [];
+let currentCategory = 'Semua';
+let currentSort = 'new';
+try{ const s = localStorage.getItem('morez-sort'); if(SORTS.some(o => o.key === s)) currentSort = s; }catch(_){}
+
+const $list = document.getElementById('publicAppList');
+const $search = document.getElementById('searchInput');
+const $tabs = document.getElementById('tabs');
+const $track = document.getElementById('track');
+const $ind = document.getElementById('ind');
+const $count = document.getElementById('count');
+const $sortBtn = document.getElementById('sortBtn');
+const $sortMenu = document.getElementById('sortMenu');
+const $sortLabel = document.getElementById('sortLabel');
+const $botList = document.getElementById('botList');
+const $botSearch = document.getElementById('botSearch');
+const $botCount = document.getElementById('botCount');
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const getVersions = a => (Array.isArray(a.versions) && a.versions.length)
+  ? [...a.versions].reverse()
+  : [{ version: a.version || 'v1.0', size: a.size, link: a.link }];
+const fmtDate = t => new Date(t).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '#';
+
+const dates = a => (Array.isArray(a.versions) ? a.versions : []).map(v => Number(v.date)).filter(n => n > 0);
+const addedAt = a => { const d = dates(a); return d.length ? Math.min(...d) : 0; };
+const updatedAt = a => { const d = dates(a); return d.length ? Math.max(...d) : 0; };
+const byName = (x, y) => String(x.name || '').localeCompare(String(y.name || ''), 'id', { numeric:true, sensitivity:'base' });
+
+const SORTERS = {
+  new: (x, y) => (addedAt(y) - addedAt(x)) || (y._i - x._i),
+  upd: (x, y) => (updatedAt(y) - updatedAt(x)) || (y._i - x._i),
+  old: (x, y) => (addedAt(x) - addedAt(y)) || (x._i - y._i),
+  az:  (x, y) => byName(x, y),
+  za:  (x, y) => byName(y, x)
+};
+
+/* ===== Bar kategori ===== */
+// Kategori = daftar dari admin + kategori yang dipakai aplikasi (otomatis)
+function buildCategories(){
+  const list = (Array.isArray(savedCats) && savedCats.length ? savedCats : DEFAULT_CATS)
+    .map(c => String(c).trim()).filter(Boolean);
+  allApps.forEach(a => {
+    const c = String(a.category || '').trim();
+    if(c && !list.some(x => x.toLowerCase() === c.toLowerCase())) list.push(c);
+  });
+  CATEGORIES = ['Semua', ...list];
+  if(!CATEGORIES.includes(currentCategory)) currentCategory = 'Semua';
+}
+
+function renderTabs(){
+  $track.querySelectorAll('.tab').forEach(t => t.remove());
+  $track.insertAdjacentHTML('beforeend', CATEGORIES.map(c =>
+    `<button class="tab" role="tab" data-cat="${esc(c)}" aria-selected="${c === currentCategory}">${esc(c)}</button>`).join(''));
+  moveInd(false);
+}
+
+// Pil kaca meluncur ke tab terpilih
+function moveInd(animate){
+  const sel = $track.querySelector('.tab[aria-selected="true"]');
+  if(!sel) return;
+  if(!animate) $ind.style.transition = 'none';
+  $ind.style.width = sel.offsetWidth + 'px';
+  $ind.style.transform = `translateX(${sel.offsetLeft}px)`;
+  if(!animate){ void $ind.offsetWidth; $ind.style.transition = ''; return; }
+  $ind.classList.remove('sq'); void $ind.offsetWidth; $ind.classList.add('sq');
+}
+
+// Geser bar agar tab terpilih ke tengah (tab berikutnya ikut terlihat)
+function centerTab(tab){
+  const left = tab.offsetLeft - ($tabs.clientWidth - tab.offsetWidth) / 2;
+  $tabs.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+}
+
+function renderSortMenu(){
+  $sortMenu.innerHTML = SORTS.map(o =>
+    `<button class="opt" role="menuitemradio" data-sort="${o.key}" aria-checked="${o.key === currentSort}">${o.label}
+      <svg class="ck" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></button>`).join('');
+  $sortLabel.textContent = SORTS.find(o => o.key === currentSort).short;
+}
+
+function card(app){
+  const name = app.name || 'Tanpa nama';
+  const letter = esc(name.trim().charAt(0).toUpperCase() || '?');
+  const icon = app.icon
+    ? `<img class="icon" src="${esc(app.icon)}" alt="" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=&quot;icon&quot;>${letter}</span>'">`
+    : `<span class="icon">${letter}</span>`;
+  const n = getVersions(app).length;
+  return `
+    <div class="card" data-id="${esc(app.id)}" role="button" tabindex="0">
+      <div class="left">
+        ${icon}
+        <div class="info">
+          <div class="name">${esc(name)}</div>
+          <div class="meta">${esc([app.version || 'v1.0', app.size, n > 1 ? n + ' versi' : ''].filter(v => v && String(v).trim() !== '-').join(' • '))}</div>
+          ${app.category ? `<span class="cat">${esc(app.category)}</span>` : ''}
+        </div>
+      </div>
+      <a class="dl" href="${esc(safeUrl(app.link))}" target="_blank" rel="noopener">Download</a>
+    </div>`;
+}
+
+/* Kartu muncul berurutan saat masuk layar (ringan: hanya yang terlihat) */
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  let k = 0;
+  entries.forEach(en => {
+    if(!en.isIntersecting) return;
+    const el = en.target;
+    el.style.setProperty('--d', Math.min(k++, 8) * 55 + 'ms');
+    el.classList.add('in');
+    io.unobserve(el);
+  });
+}, { rootMargin: '0px 0px -4% 0px', threshold: .05 }) : null;
+
+function observeCards(){
+  if(document.body.classList.contains('loading')) return; // tunggu splash selesai
+  document.querySelectorAll('.card:not(.in)').forEach(c => io ? io.observe(c) : c.classList.add('in'));
+}
+// Setelah animasi masuk selesai, hilangkan delay agar hover/tap langsung responsif
+const resetDelay = e => {
+  if(e.target.classList.contains('card') && e.propertyName === 'opacity') e.target.style.setProperty('--d', '0ms');
+};
+$list.addEventListener('transitionend', resetDelay);
+$botList.addEventListener('transitionend', resetDelay);
+
+window.renderApps = function(list){
+  const sortDesc = SORTS.find(o => o.key === currentSort).desc;
+  $count.innerHTML = list.length ? `<span><b>${list.length}</b> aplikasi</span><span>Urut: ${esc(sortDesc)}</span>` : '';
+  if(!list.length){
+    const q = $search.value.trim();
+    $list.innerHTML = `<div class="empty"><b>${q ? 'Tidak ada hasil' : 'Belum ada aplikasi'}</b>${
+      q ? `Tidak ada aplikasi bernama "${esc(q)}". Coba kata lain atau pilih kategori Semua.` : 'Kategori ini masih kosong. Coba kategori lain.'}</div>`;
+    return;
+  }
+  $list.innerHTML = list.map(card).join('');
+  observeCards();
+};
+
+window.setCategory = function(cat){
+  currentCategory = cat;
+  $track.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.cat === cat));
+  moveInd(true);
+  const sel = $track.querySelector('.tab[aria-selected="true"]');
+  if(sel) centerTab(sel);
+  window.filterApps();
+};
+
+window.setSort = function(key){
+  currentSort = key;
+  try{ localStorage.setItem('morez-sort', key); }catch(_){}
+  renderSortMenu();
+  window.filterApps();
+};
+
+window.filterApps = function(){
+  const kw = $search.value.toLowerCase().trim();
+  const list = allApps.filter(a =>
+    (currentCategory === 'Semua' || a.category === currentCategory) &&
+    String(a.name || '').toLowerCase().includes(kw));
+  list.sort(SORTERS[currentSort]);
+  window.renderApps(list);
+};
+
+let suppressClick = false;
+$tabs.addEventListener('click', e => {
+  if(suppressClick) return;
+  const b = e.target.closest('.tab');
+  if(b) window.setCategory(b.dataset.cat);
+});
+
+/* Geser lensa kaca: tahan tab aktif lalu seret ke kiri/kanan, lepas untuk memilih */
+let drag = null, raf = 0, lastX = 0;
+const tabsOf = () => [...$track.querySelectorAll('.tab')];
+
+function dragFrame(){
+  if(!drag || !drag.moved){ raf = 0; return; }
+  const tb = $tabs.getBoundingClientRect();
+  if(lastX > tb.right - 44) $tabs.scrollLeft += 9;        // bar ikut menggeser di tepi
+  else if(lastX < tb.left + 44) $tabs.scrollLeft -= 9;
+  const x = lastX - $track.getBoundingClientRect().left;
+  let best = null, bd = Infinity;
+  for(const t of tabsOf()){
+    const d = Math.abs(t.offsetLeft + t.offsetWidth / 2 - x);
+    if(d < bd){ bd = d; best = t; }
+  }
+  const w = best.offsetWidth;
+  const left = Math.min(Math.max(x - w / 2, 0), $track.offsetWidth - 22 - w);
+  $ind.style.width = w + 'px';
+  $ind.style.transform = `translateX(${left}px)`;
+  if(drag.hot !== best){
+    if(drag.hot) drag.hot.classList.remove('hot');
+    best.classList.add('hot');
+    drag.hot = best;
+  }
+  raf = requestAnimationFrame(dragFrame);
+}
+
+function endDrag(cancel){
+  if(!drag) return;
+  const d = drag; drag = null;
+  cancelAnimationFrame(raf); raf = 0;
+  $ind.classList.remove('press', 'drag');
+  $track.classList.remove('dragging');
+  $tabs.style.scrollBehavior = '';
+  if(d.hot) d.hot.classList.remove('hot');
+  if(!d.moved) return;                                     // hanya tap: biarkan klik biasa
+  suppressClick = true; setTimeout(() => { suppressClick = false; }, 60);
+  const target = cancel ? d.tab : (d.hot || d.tab);
+  if(target === d.tab){ moveInd(true); centerTab(d.tab); }
+  else window.setCategory(target.dataset.cat);
+}
+
+$track.addEventListener('pointerdown', e => {
+  const t = e.target.closest('.tab');
+  if(!t || t.getAttribute('aria-selected') !== 'true') return;
+  drag = { tab: t, startX: e.clientX, moved: false, hot: null };
+  lastX = e.clientX;
+  $ind.classList.add('press');
+  try{ t.setPointerCapture(e.pointerId); }catch(_){}
+});
+$track.addEventListener('pointermove', e => {
+  if(!drag) return;
+  lastX = e.clientX;
+  if(!drag.moved && Math.abs(e.clientX - drag.startX) > 6){
+    drag.moved = true;
+    $tabs.style.scrollBehavior = 'auto';
+    $ind.classList.add('drag');
+    $track.classList.add('dragging');
+    raf = requestAnimationFrame(dragFrame);
+  }
+});
+$track.addEventListener('pointerup', () => endDrag(false));
+$track.addEventListener('pointercancel', () => endDrag(true));
+$search.addEventListener('input', () => window.filterApps());
+// Posisi pil ikut benar saat font selesai dimuat / layar diputar
+window.addEventListener('resize', () => moveInd(false));
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => moveInd(false));
+
+/* ===== Menu urutan ===== */
+function toggleMenu(open){
+  const want = typeof open === 'boolean' ? open : !$sortMenu.classList.contains('open');
+  $sortMenu.classList.toggle('open', want);
+  $sortBtn.setAttribute('aria-expanded', want);
+}
+$sortBtn.addEventListener('click', e => { e.stopPropagation(); toggleMenu(); });
+$sortMenu.addEventListener('click', e => {
+  const o = e.target.closest('.opt');
+  if(!o) return;
+  window.setSort(o.dataset.sort);
+  toggleMenu(false);
+});
+document.addEventListener('click', e => { if(!e.target.closest('.sortwrap')) toggleMenu(false); });
+
+// Kilau kaca mengikuti kursor (hanya perangkat dengan mouse)
+if(window.matchMedia('(hover:hover)').matches){
+  [$list, $botList].forEach(L => L.addEventListener('pointermove', e => {
+    const c = e.target.closest('.card');
+    if(!c) return;
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+}
+
+/* ===== Detail & riwayat versi ===== */
+const $wrap = document.getElementById('sheetWrap');
+const $sheet = document.getElementById('sheet');
+
+function openSheet(id){
+  const app = allApps.find(a => a.id === id);
+  if(!app) return;
+  const vs = getVersions(app);
+  const letter = esc((app.name || '?').trim().charAt(0).toUpperCase());
+  const icon = app.icon
+    ? `<img class="icon" src="${esc(app.icon)}" alt="" onerror="this.outerHTML='<span class=&quot;icon&quot;>${letter}</span>'">`
+    : `<span class="icon">${letter}</span>`;
+  $sheet.innerHTML = `
+    <div class="grab"></div>
+    <div class="s-head">
+      ${icon}
+      <div style="min-width:0">
+        <div class="s-title">${esc(app.name)}</div>
+        ${app.category ? `<span class="cat">${esc(app.category)}</span>` : ''}
+      </div>
+      <button class="s-close" aria-label="Tutup">&#10005;</button>
+    </div>
+    <p class="s-label">RIWAYAT VERSI (${vs.length})</p>
+    ${vs.map((v, i) => {
+      const meta = [v.size && String(v.size).trim() !== '-' ? v.size : '', v.date ? fmtDate(v.date) : ''].filter(Boolean).join(' • ');
+      return `
+      <div class="ver${i === 0 ? ' latest' : ''}" style="--i:${Math.min(i,10)}">
+        <div>
+          <div class="v-name">${esc(v.version || '-')}${i === 0 ? '<span class="badge">TERBARU</span>' : ''}</div>
+          ${meta ? `<div class="v-meta">${esc(meta)}</div>` : ''}
+          ${v.note ? `<div class="v-note">${esc(v.note)}</div>` : ''}
+        </div>
+        <a class="dl" href="${esc(safeUrl(v.link))}" target="_blank" rel="noopener">Download</a>
+      </div>`;
+    }).join('')}`;
+  $sheet.scrollTop = 0;
+  $wrap.classList.add('open');
+  document.body.classList.add('sheet-open');
+  if(!(history.state && history.state.sheet)) history.pushState({ sheet: 1 }, '');
+}
+
+function closeSheet(fromPop){
+  if(!$wrap.classList.contains('open')) return;
+  $wrap.classList.remove('open');
+  document.body.classList.remove('sheet-open');
+  if(!fromPop && history.state && history.state.sheet) history.back();
+}
+
+$list.addEventListener('click', e => {
+  if(e.target.closest('a')) return;
+  const c = e.target.closest('.card');
+  if(c) openSheet(c.dataset.id);
+});
+$list.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const c = e.target.closest('.card');
+  if(c) openSheet(c.dataset.id);
+});
+$sheet.addEventListener('click', e => { if(e.target.closest('.s-close')) closeSheet(); });
+document.getElementById('scrim').addEventListener('click', () => closeSheet());
+document.addEventListener('keydown', e => { if(e.key === 'Escape'){ toggleMenu(false); closeSheet(); } });
+window.addEventListener('popstate', () => closeSheet(true));
+
+/* ===== SC Bot WhatsApp ===== */
+let allBots = [], botsLoaded = false, botsLoading = false;
+const DEFAULT_BOT_CATS = ['Bot MD', 'Bot Bug'];
+let savedBotCats = null;
+let BOT_CATEGORIES = ['Semua', ...DEFAULT_BOT_CATS];
+let botCategory = 'Semua';
+const BOT_SORTS = [
+  { key:'new', label:'Terbaru',    short:'Terbaru', desc:'terbaru' },
+  { key:'old', label:'Terlama',    short:'Terlama', desc:'terlama' },
+  { key:'az',  label:'Nama A → Z', short:'A → Z',   desc:'nama A → Z' },
+  { key:'za',  label:'Nama Z → A', short:'Z → A',   desc:'nama Z → A' }
+];
+let botSort = 'new';
+try{ const bs = localStorage.getItem('morez-bot-sort'); if(BOT_SORTS.some(o => o.key === bs)) botSort = bs; }catch(_){}
+const botByName = (x, y) => String(x.name || '').localeCompare(String(y.name || ''), 'id', { numeric:true, sensitivity:'base' });
+const BOT_SORTERS = {
+  new: (x, y) => (Number(y.date) || 0) - (Number(x.date) || 0) || (y._i - x._i),
+  old: (x, y) => (Number(x.date) || 0) - (Number(y.date) || 0) || (x._i - y._i),
+  az:  botByName,
+  za:  (x, y) => botByName(y, x)
+};
+const $botTabs = document.getElementById('botTabs');
+const $botTrack = document.getElementById('botTrack');
+const $botInd = document.getElementById('botInd');
+const $botSortBtn = document.getElementById('botSortBtn');
+const $botSortMenu = document.getElementById('botSortMenu');
+const $botSortLabel = document.getElementById('botSortLabel');
+const BOT_SVG = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M9 10h6M9 14h4"/></svg>';
+const botFeatures = b => String(b.features || '').split(/[\n,]+/).map(x => x.trim()).filter(Boolean);
+// Terbaru di atas. Bot lama (tanpa riwayat) dianggap punya 1 versi dari data yang ada
+const botVersions = b => (Array.isArray(b.versions) && b.versions.length)
+  ? [...b.versions].reverse()
+  : [{ version: b.version || 'v1.0', size: b.size, link: b.link, date: b.date }];
+const botIcon = b => {
+  if(!b.icon) return `<span class="icon botic">${BOT_SVG}</span>`;
+  const letter = esc((b.name || '?').trim().charAt(0).toUpperCase());
+  return `<img class="icon" src="${esc(b.icon)}" alt="" loading="lazy" decoding="async" onerror="this.outerHTML='<span class=&quot;icon botic&quot;>${letter}</span>'">`;
+};
+
+function botCard(b){
+  const nv = botVersions(b).length;
+  const meta = [b.version, b.tech, b.size, nv > 1 ? nv + ' versi' : ''].filter(v => v && String(v).trim() !== '-').join(' • ');
+  return `
+    <div class="card" data-id="${esc(b.id)}" role="button" tabindex="0">
+      <div class="left">
+        ${botIcon(b)}
+        <div class="info">
+          <div class="name">${esc(b.name || 'Tanpa nama')}</div>
+          ${meta ? `<div class="meta">${esc(meta)}</div>` : ''}
+          ${b.category ? `<span class="cat">${esc(b.category)}</span>` : ''}
+          ${b.desc ? `<div class="bdesc">${esc(b.desc)}</div>` : ''}
+        </div>
+      </div>
+      <a class="dl" href="${esc(safeUrl(b.link))}" target="_blank" rel="noopener">Download</a>
+    </div>`;
+}
+
+// Kategori SC Bot = daftar dari admin + kategori yang dipakai bot (otomatis)
+function buildBotCategories(){
+  const list = (Array.isArray(savedBotCats) && savedBotCats.length ? savedBotCats : DEFAULT_BOT_CATS)
+    .map(c => String(c).trim()).filter(Boolean);
+  allBots.forEach(b => {
+    const c = String(b.category || '').trim();
+    if(c && !list.some(x => x.toLowerCase() === c.toLowerCase())) list.push(c);
+  });
+  BOT_CATEGORIES = ['Semua', ...list];
+  if(!BOT_CATEGORIES.includes(botCategory)) botCategory = 'Semua';
+}
+
+function renderBotTabs(){
+  $botTrack.querySelectorAll('.tab').forEach(t => t.remove());
+  $botTrack.insertAdjacentHTML('beforeend', BOT_CATEGORIES.map(c =>
+    `<button class="tab" role="tab" data-cat="${esc(c)}" aria-selected="${c === botCategory}">${esc(c)}</button>`).join(''));
+  moveBotInd(false);
+}
+
+function moveBotInd(animate){
+  const sel = $botTrack.querySelector('.tab[aria-selected="true"]');
+  if(!sel) return;
+  if(!animate) $botInd.style.transition = 'none';
+  $botInd.style.width = sel.offsetWidth + 'px';
+  $botInd.style.transform = `translateX(${sel.offsetLeft}px)`;
+  if(!animate){ void $botInd.offsetWidth; $botInd.style.transition = ''; return; }
+  $botInd.classList.remove('sq'); void $botInd.offsetWidth; $botInd.classList.add('sq');
+}
+
+function renderBotSortMenu(){
+  $botSortMenu.innerHTML = BOT_SORTS.map(o =>
+    `<button class="opt" role="menuitemradio" data-sort="${o.key}" aria-checked="${o.key === botSort}">${o.label}
+      <svg class="ck" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></button>`).join('');
+  $botSortLabel.textContent = BOT_SORTS.find(o => o.key === botSort).short;
+}
+
+function toggleBotMenu(open){
+  const want = typeof open === 'boolean' ? open : !$botSortMenu.classList.contains('open');
+  $botSortMenu.classList.toggle('open', want);
+  $botSortBtn.setAttribute('aria-expanded', want);
+}
+
+window.setBotCategory = function(cat){
+  botCategory = cat;
+  $botTrack.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.cat === cat));
+  moveBotInd(true);
+  const sel = $botTrack.querySelector('.tab[aria-selected="true"]');
+  if(sel) $botTabs.scrollTo({ left: Math.max(0, sel.offsetLeft - ($botTabs.clientWidth - sel.offsetWidth) / 2), behavior: 'smooth' });
+  renderBots();
+};
+
+window.setBotSort = function(key){
+  botSort = key;
+  try{ localStorage.setItem('morez-bot-sort', key); }catch(_){}
+  renderBotSortMenu();
+  renderBots();
+};
+
+$botTabs.addEventListener('click', e => {
+  const t = e.target.closest('.tab');
+  if(t) window.setBotCategory(t.dataset.cat);
+});
+$botSortBtn.addEventListener('click', e => { e.stopPropagation(); toggleBotMenu(); });
+$botSortMenu.addEventListener('click', e => {
+  const o = e.target.closest('.opt');
+  if(!o) return;
+  window.setBotSort(o.dataset.sort);
+  toggleBotMenu(false);
+});
+document.addEventListener('click', e => { if(!e.target.closest('.sortwrap')) toggleBotMenu(false); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') toggleBotMenu(false); });
+renderBotTabs();
+renderBotSortMenu();
+
+function renderBots(){
+  const kw = $botSearch.value.toLowerCase().trim();
+  const list = allBots
+    .filter(b => (botCategory === 'Semua' || b.category === botCategory) &&
+      (String(b.name || '') + ' ' + String(b.tech || '')).toLowerCase().includes(kw))
+    .sort(BOT_SORTERS[botSort]);
+  const desc = BOT_SORTS.find(o => o.key === botSort).desc;
+  $botCount.innerHTML = list.length ? `<span><b>${list.length}</b> SC Bot</span><span>Urut: ${esc(desc)}</span>` : '';
+  if(!list.length){
+    $botList.innerHTML = `<div class="empty"><b>${kw ? 'Tidak ada hasil' : 'Belum ada SC Bot'}</b>${
+      kw ? `Tidak ada SC Bot bernama "${esc($botSearch.value.trim())}". Coba kata lain atau pilih kategori Semua.`
+         : (botsLoaded && botCategory !== 'Semua' ? 'Kategori ini masih kosong. Coba kategori lain.' : 'SC Bot akan muncul di sini setelah ditambahkan.')}</div>`;
+    return;
+  }
+  $botList.innerHTML = list.map(botCard).join('');
+  observeCards();
+}
+
+async function loadBots(){
+  if(botsLoaded || botsLoading) return;
+  botsLoading = true;
+  $botList.innerHTML = '<div class="empty"><b>Memuat SC Bot...</b></div>';
+  try{
+    try{
+      const bc = await getDoc(doc(db, "settings", "botCategories"));
+      if(bc.exists() && Array.isArray(bc.data().list)) savedBotCats = bc.data().list;
+    }catch(e){ console.warn('Kategori SC Bot memakai daftar bawaan', e); }
+    const snap = await getDocs(collection(db, "bots"));
+    allBots = [];
+    snap.forEach(d => allBots.push({ id: d.id, _i: allBots.length, ...d.data() }));
+    botsLoaded = true;
+    buildBotCategories();
+    renderBotTabs();
+    renderBots();
+  }catch(e){
+    console.error(e);
+    $botList.innerHTML = '<div class="empty"><b>Data gagal dimuat</b>Periksa koneksi internet, lalu buka tab SC Bot lagi.</div>';
+  }
+  botsLoading = false;
+}
+
+function openBotSheet(id){
+  const b = allBots.find(x => x.id === id);
+  if(!b) return;
+  const feats = botFeatures(b);
+  const vs = botVersions(b);
+  const ds = vs.map(v => Number(v.date)).filter(n => n > 0);
+  const added = ds.length ? Math.min(...ds) : (Number(b.date) || 0);
+  const rows = [['Bahasa / Tech', b.tech], ['Ditambahkan', added ? fmtDate(added) : '']]
+    .filter(r => r[1] && String(r[1]).trim() !== '-');
+  $sheet.innerHTML = `
+    <div class="grab"></div>
+    <div class="s-head">
+      ${botIcon(b)}
+      <div style="min-width:0">
+        <div class="s-title">${esc(b.name || 'Tanpa nama')}</div>
+        <span class="cat">${esc(b.category || 'SC Bot WhatsApp')}</span>
+      </div>
+      <button class="s-close" aria-label="Tutup">&#10005;</button>
+    </div>
+    ${b.desc ? `<p class="s-label">DESKRIPSI</p><p class="s-desc">${esc(b.desc)}</p>` : ''}
+    ${feats.length ? `<p class="s-label">FITUR</p><div class="chips">${feats.map(f => `<span class="chip">${esc(f)}</span>`).join('')}</div>` : ''}
+    ${rows.length ? `<p class="s-label">INFO</p>${rows.map(r => `<div class="irow"><span>${r[0]}</span><b>${esc(r[1])}</b></div>`).join('')}<div style="height:8px"></div>` : ''}
+    <p class="s-label">RIWAYAT VERSI (${vs.length})</p>
+    ${vs.map((v, i) => {
+      const meta = [v.size && String(v.size).trim() !== '-' ? v.size : '', v.date ? fmtDate(v.date) : ''].filter(Boolean).join(' • ');
+      return `
+      <div class="ver${i === 0 ? ' latest' : ''}" style="--i:${Math.min(i,10)}">
+        <div>
+          <div class="v-name">${esc(v.version || '-')}${i === 0 ? '<span class="badge">TERBARU</span>' : ''}</div>
+          ${meta ? `<div class="v-meta">${esc(meta)}</div>` : ''}
+          ${v.note ? `<div class="v-note">${esc(v.note)}</div>` : ''}
+        </div>
+        <a class="dl" href="${esc(safeUrl(v.link))}" target="_blank" rel="noopener">Download</a>
+      </div>`;
+    }).join('')}`;
+  $sheet.scrollTop = 0;
+  $wrap.classList.add('open');
+  document.body.classList.add('sheet-open');
+  if(!(history.state && history.state.sheet)) history.pushState({ sheet: 1 }, '');
+}
+
+$botList.addEventListener('click', e => {
+  if(e.target.closest('a')) return;
+  const c = e.target.closest('.card');
+  if(c) openBotSheet(c.dataset.id);
+});
+$botList.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const c = e.target.closest('.card');
+  if(c) openBotSheet(c.dataset.id);
+});
+$botSearch.addEventListener('input', renderBots);
+
+/* ===== Bar bawah: pindah halaman ===== */
+const $dock = document.getElementById('dockIn');
+const $dInd = document.getElementById('dInd');
+const $tagline = document.getElementById('tagline');
+const TAGLINES = { apps: 'Digital Products & Applications Catalog', bots: 'Script Bot WhatsApp siap pakai' };
+let currentView = 'apps';
+
+function moveDock(animate){
+  const sel = $dock.querySelector('.dock-btn[aria-selected="true"]');
+  if(!sel) return;
+  if(!animate) $dInd.style.transition = 'none';
+  $dInd.style.width = sel.offsetWidth + 'px';
+  $dInd.style.transform = `translateX(${sel.offsetLeft}px)`;
+  if(!animate){ void $dInd.offsetWidth; $dInd.style.transition = ''; return; }
+  $dInd.classList.remove('sq'); void $dInd.offsetWidth; $dInd.classList.add('sq');
+}
+
+window.setView = function(v){
+  currentView = v;
+  $dock.querySelectorAll('.dock-btn').forEach(b => b.setAttribute('aria-selected', b.dataset.view === v));
+  document.getElementById('viewApps').classList.toggle('active', v === 'apps');
+  document.getElementById('viewBots').classList.toggle('active', v === 'bots');
+  $tagline.textContent = TAGLINES[v];
+  toggleMenu(false);
+  toggleBotMenu(false);
+  moveDock(true);
+  if(v === 'bots') moveBotInd(false);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if(v === 'bots') loadBots();
+  observeCards();
+};
+$dock.addEventListener('click', e => {
+  const b = e.target.closest('.dock-btn');
+  if(b && b.dataset.view !== currentView) window.setView(b.dataset.view);
+});
+window.addEventListener('resize', () => { moveDock(false); moveBotInd(false); });
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { moveDock(false); moveBotInd(false); });
+moveDock(false);
+
+function hideSplash(){
+  const s = document.getElementById('splash');
+  s.classList.add('out');
+  document.body.classList.remove('loading');
+  observeCards(); // mulai animasi kartu setelah splash terbuka
+  moveInd(false);
+  moveDock(false);
+  setTimeout(() => s.remove(), 900);
+}
+
+async function fetchPublicData(){
+  renderTabs();
+  renderSortMenu();
+  const minWait = new Promise(r => setTimeout(r, 2000));
+  const status = document.getElementById('status');
+  try{
+    const alertSnap = await getDoc(doc(db, "settings", "alert"));
+    if(alertSnap.exists()){
+      const a = alertSnap.data();
+      if(a.active && a.message){
+        document.getElementById('alertText').innerHTML = esc(a.message).replace(
+          /\b((?:https?:\/\/)?[a-z0-9-]+(?:\.[a-z]{2,})+(?:\/[^\s,]*)?)/gi,
+          (m) => `<a href="${/^https?:/i.test(m) ? m : 'https://' + m}" target="_blank" rel="noopener">${m}</a>`);
+        document.getElementById('dynamicAlert').className = 'glass show ' + (['warning','success','danger'].includes(a.type) ? a.type : 'info');
+      }
+    }
+    try{
+      const cs = await getDoc(doc(db, "settings", "categories"));
+      if(cs.exists() && Array.isArray(cs.data().list)) savedCats = cs.data().list;
+    }catch(e){ console.warn('Kategori memakai daftar bawaan', e); }
+    status.textContent = 'Menyiapkan aplikasi...';
+    const snap = await getDocs(collection(db, "apps"));
+    allApps = [];
+    snap.forEach(d => allApps.push({ id: d.id, _i: allApps.length, ...d.data() }));
+    buildCategories();
+    renderTabs();
+    window.filterApps();
+  }catch(e){
+    console.error(e);
+    $list.innerHTML = '<div class="empty"><b>Data gagal dimuat</b>Periksa koneksi internet, lalu muat ulang halaman.</div>';
+  }
+  await minWait;
+  hideSplash();
+}
+
+fetchPublicData();
+</script>
+</body>
+</html>
